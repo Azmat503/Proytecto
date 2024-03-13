@@ -1,0 +1,92 @@
+name: proyecto
+description: A new Flutter project.
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.1.2 <4.0.0'
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  vertical_tabs_flutter: ^1.0.0
+  datepicker_dropdown: ^0.0.9
+  newsfeed_multiple_imageview: ^1.0.1
+  dropdown_button2: ^2.3.9
+  google_fonts: ^6.1.0
+  firebase: 9.0.3
+  firebase_auth: ^4.6.3
+  firebase_core: 2.14.0
+  firebase_storage: 11.2.1
+  cloud_firestore: 4.8.1
+  image_picker:  1.0.7
+  video_player: 2.8.1
+  uuid: 4.1.0
+  video_compress: 3.1.2
+  timeago: 3.5.0
+  cached_network_image: 3.3.0
+  get: 4.6.5
+  appinio_video_player: ^1.2.2
+  intl: ^0.18.0
+  emoji_picker_flutter: ^1.6.3
+  chewie: ^1.7.4
+  flutter_stories: ^0.3.1
+  screenshot: ^2.1.0
+  universal_html: ^2.0.3
+  http: ^0.13.0
+  calendar_view: ^1.0.4
+  google_maps_flutter_web: ^0.5.4+3
+  google_maps_flutter: ^2.5.2
+  geolocator: ^10.1.0
+  quill_html_editor: ^2.2.7
+  flutter_widget_from_html: ^0.14.11
+  flutter_html: ^3.0.0-beta.2
+  visibility_detector: ^0.4.0+2
+  image_picker_web: ^3.1.1
+  file_picker: ^6.1.1
+  carousel_slider: ^4.2.1
+  photo_view: ^0.14.0
+  youtube_player_iframe: ^4.0.4
+  fluro: ^2.0.5
+  shared_preferences: ^2.0.8
+  firebase_messaging: ^14.6.4
+  flutter_local_notifications: ^16.3.2
+  youtube_player_iframe_plus: ^2.3.2
+  internet_file: ^1.2.0
+  pdfx: ^2.6.0
+  flutter_meedu_videoplayer: ^4.3.1
+ 
+ 
+
+
+dependency_overrides:
+  http: 1.0.0
+  
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+
+flutter:
+
+  uses-material-design: true
+  assets:
+    - assets/
+  
+  fonts:
+    - family: Lato
+      fonts:
+        - asset: fonts/Lato/Lato-Black.ttf
+        - asset: fonts/Lato/Lato-BlackItalic.ttf
+        - asset: fonts/Lato/Lato-Italic.ttf
+        - asset: fonts/Lato/Lato-Thin.ttf      
+    - family: Lato-Regular
+      fonts:
+        - asset: fonts/Lato/Lato-Regular.ttf
+
+  # see https://flutter.dev/custom-fonts/#from-packages
