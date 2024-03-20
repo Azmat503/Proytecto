@@ -4,7 +4,9 @@ import 'dart:typed_data';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:pdfx/pdfx.dart';
+
 import 'package:proyecto/Screens/UserSide/home_screen.dart';
+import 'package:proyecto/Screens/UserSide/see_Images_screen.dart';
 import 'package:quill_html_editor/quill_html_editor.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proyecto/my_utilities.dart';
@@ -21,6 +23,7 @@ import 'dart:html' as html;
 //import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 final List<String> _allArticlesImages = [];
+final GlobalKey<_PDFViewerWidgetState> pdfFViewerWidgetKey = GlobalKey();
 
 class CreateArticleContainer extends StatefulWidget {
   final Function onBackPressed;
@@ -46,9 +49,10 @@ class _CreateArticleContainerState extends State<CreateArticleContainer>
   final CarouselController carouselController = CarouselController();
   late PageController pageController = PageController();
   late TextEditingController textEditingController = TextEditingController();
+  final ScrollController scrollController = ScrollController();
   var isMobile = false;
   var isTopicSideBarHide = false;
-
+  var pdfIsAdded = false;
   var pdfFilePath = [];
   var bytes;
   var isLoading = false;
@@ -61,8 +65,9 @@ class _CreateArticleContainerState extends State<CreateArticleContainer>
   Map<String, dynamic>? userData;
   var articleName = "";
   var isYoutube = false;
-  var isScrollAble = false;
+
   late PdfController? pdfController;
+
   @override
   void initState() {
     super.initState();
@@ -95,7 +100,7 @@ class _CreateArticleContainerState extends State<CreateArticleContainer>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        height: height,
+        height: pdfIsAdded ? height + 420 : height,
         color: backgroundColor,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,10 +115,12 @@ class _CreateArticleContainerState extends State<CreateArticleContainer>
             navigatioBarContainer(),
             Expanded(
               child: SingleChildScrollView(
+                controller: scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (isYoutube == true) youtubePlayerWidget(),
+                    // if (isYoutube == true) youtubePlayerWidget(),
 
                     // if (_allArticlesImages.isNotEmpty)
                     //   ImagesRowWidget(
@@ -222,7 +229,7 @@ class _CreateArticleContainerState extends State<CreateArticleContainer>
                                         ))),
                               ),
                               PDFViewerWidget(
-                                key: UniqueKey(),
+                                //key: UniqueKey(),
                                 bytes: bytes,
                               ),
                             ],
@@ -338,13 +345,15 @@ class _CreateArticleContainerState extends State<CreateArticleContainer>
                   ),
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.only(right: 20, left: 20),
+                      padding: const EdgeInsets.only(
+                          right: 20, left: 20, bottom: 20),
                       margin: const EdgeInsets.only(right: 20),
                       color: Colors.white,
                       height: 440,
                       child: QuillHtmlEditor(
                         controller: htmlController,
                         hintText: "",
+                        onTextChanged: (p0) {},
                         hintTextStyle: GoogleFonts.lato(
                             textStyle: const TextStyle(
                                 fontFamily: "Lato",
@@ -566,8 +575,10 @@ class _CreateArticleContainerState extends State<CreateArticleContainer>
     // print("pdfFilePath[0] , ${pdfFilePath[0]}, bytes $bytes , ");
     var pdfDocument = PdfDocument.openData(bytes!);
     pdfController = PdfController(document: pdfDocument);
-
+    pdfIsAdded = true;
     setState(() {});
+    scrollController.animateTo(scrollController.position.maxScrollExtent + 420,
+        duration: const Duration(milliseconds: 400), curve: Curves.ease);
   }
 
   Future<void> savePost(userInfo, pdfFilePath) async {
@@ -824,6 +835,7 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget>
   var hideButton = true;
   var isMobile = false;
   var currentIndex = 1;
+
   @override
   void initState() {
     super.initState();
@@ -853,9 +865,16 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget>
     // final Uri parsedUri = Uri.parse(url);
 
     try {
+      //print();
       var pdfDocument = PdfDocument.openData(widget.bytes);
-      pdfController = PdfController(document: pdfDocument);
-      setState(() {});
+      pdfController = PdfController(
+        document: pdfDocument,
+        initialPage: currentIndex,
+      );
+      print("callinitializePDFController , $currentIndex");
+      if (mounted) {
+        setState(() {});
+      }
     } catch (error) {
       print('Error during HTTP request: $error');
     }
@@ -935,7 +954,6 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget>
                                     }
                                     setState(() {
                                       currentIndex++;
-                                      //    sliderPDFCurrentIndex = currentIndex;
                                     });
                                   },
                                   child: Container(
@@ -1002,10 +1020,11 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget>
                                   color: Colors.black.withOpacity(0.6),
                                   padding: const EdgeInsets.only(left: 10),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        "${currentIndex}/ $pagesCounts",
+                                        "$currentIndex/ $pagesCounts",
                                         style: const TextStyle(
                                             color: Colors.white),
                                       ),
@@ -1037,6 +1056,24 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget>
                                           autofocus: true,
                                         ),
                                       ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          html.document.documentElement!
+                                              .requestFullscreen();
+                                          navigateToFullCarouselSliderScreen(
+                                              pagesCounts);
+                                        },
+                                        child: Container(
+                                          width: 30,
+                                          height: 20,
+                                          margin:
+                                              const EdgeInsets.only(right: 10),
+                                          child: Image.asset(
+                                            "assets/fullscreen.png",
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -1053,6 +1090,39 @@ class _PDFViewerWidgetState extends State<PDFViewerWidget>
         ),
       ),
     );
+  }
+
+  void navigateToFullCarouselSliderScreen(int pagesCounts) async {
+    print("currentIndex  $currentIndex");
+    int? returnedIndex = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FullPDFViewerScreen(
+          key: pdfFViewerWidgetKey,
+          pagesCounts: pagesCounts,
+          currentIndex: currentIndex,
+          pdfUrl: "",
+          bytes: widget.bytes,
+          isBytesAvaiable: true,
+          // Pass the current index
+        ),
+      ),
+    );
+
+    // Handle returnedIndex when it returns
+    if (returnedIndex != null) {
+      if (mounted) {
+        setState(() {
+          currentIndex = returnedIndex;
+        });
+      }
+      print("returnedIndex $returnedIndex");
+      pdfController!.animateToPage(
+        currentIndex,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 }
 

@@ -362,12 +362,15 @@ class FullPDFViewerScreen extends StatefulWidget {
   final int currentIndex;
   final String pdfUrl;
   final int pagesCounts;
-
+  final bool isBytesAvaiable;
+  final Uint8List? bytes;
   const FullPDFViewerScreen({
     super.key,
     required this.currentIndex,
     required this.pdfUrl,
     required this.pagesCounts,
+    required this.isBytesAvaiable,
+    this.bytes,
   });
 
   @override
@@ -402,35 +405,34 @@ class _FullPDFViewerScreenState extends State<FullPDFViewerScreen>
 
     pdfController = pdfController;
     setState(() {});
-    print('widget.currentIndex: $currentIndex');
-
+    print("widget.currentIndex ${widget.currentIndex}");
     //setState(() {});
 
     WidgetsBinding.instance.addPostFrameCallback((Duration timeStamp) async {
-      String url = widget.pdfUrl;
-      final Uri parsedUri = Uri.parse(url);
-
-      try {
-        final Response res = await http.get(
-          parsedUri,
-        );
-        //res.cookie('key', 'value', { sameSite: 'None', secure: true });
-        var doc = PdfDocument.openData(res.bodyBytes);
+      if (widget.isBytesAvaiable) {
+        var pdfDocument = PdfDocument.openData(widget.bytes!);
         pdfController = PdfController(
-            document: doc,
-            viewportFraction: 0.5,
-            initialPage: widget.currentIndex);
-        setState(() {});
-        if (res.statusCode == 200) {
-          print(
-              'PDF Content: ${String.fromCharCodes(res.bodyBytes.sublist(0, min(100, res.bodyBytes.length)))}');
+          document: pdfDocument,
+          viewportFraction: 0.5,
+          initialPage: widget.currentIndex,
+        );
+      } else {
+        String url = widget.pdfUrl;
+        final Uri parsedUri = Uri.parse(url);
 
-          print('PDF Data Length: ${res.bodyBytes.length}');
-        } else {
-          print('Failed to fetch PDF. HTTP Status Code: ${res.statusCode}');
+        try {
+          final Response res = await http.get(
+            parsedUri,
+          );
+          var doc = PdfDocument.openData(res.bodyBytes);
+          pdfController = PdfController(
+              document: doc,
+              viewportFraction: 0.5,
+              initialPage: widget.currentIndex);
+          setState(() {});
+        } catch (error) {
+          print('Error during HTTP request: $error');
         }
-      } catch (error) {
-        print('Error during HTTP request: $error');
       }
     });
   }

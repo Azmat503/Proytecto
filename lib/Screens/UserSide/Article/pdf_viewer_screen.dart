@@ -288,7 +288,7 @@ class _PDFViewerScreenState extends State<PDFViewerScreen>
           pagesCounts: pagesCounts,
           currentIndex: currentIndex,
           pdfUrl: widget.pdfURl,
-
+          isBytesAvaiable: false,
           // Pass the current index
         ),
       ),

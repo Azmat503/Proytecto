@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart' as foundation;
-import 'package:flutter_html/flutter_html.dart';
 import 'dart:html' as html;
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:intl/intl.dart';
@@ -284,11 +283,6 @@ class _StudiesDetailScreenState extends State<StudiesDetailScreen> {
                                   const SizedBox(
                                     width: 20,
                                   ),
-                                  // Container(
-                                  //   width: 3,
-                                  //   height: 50,
-                                  //   color: buttonColor,
-                                  // )
                                 ],
                               )
                           ]),

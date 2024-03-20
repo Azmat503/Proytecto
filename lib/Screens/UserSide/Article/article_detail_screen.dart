@@ -274,12 +274,7 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
                               ),
                             );
                             controller!.load(src);
-                            controller!.listen((event) {
-                              if (event.playerState ==
-                                  y_tplus.PlayerState.playing) {
-                                controller!.pause();
-                              }
-                            });
+
                             return Container(
                               width: width * 0.5,
                               height: height * 0.6,
@@ -973,6 +968,7 @@ class _PDFViewerScreenState extends State<PDFViewerScreen>
       var doc = PdfDocument.openData(res.bodyBytes);
       pdfController = PdfController(document: doc, initialPage: currentIndex);
       setState(() {});
+      print("callinitializePDFController , $currentIndex");
     } catch (error) {
       print('Error during HTTP request: $error');
     }
@@ -1199,6 +1195,8 @@ class _PDFViewerScreenState extends State<PDFViewerScreen>
           pagesCounts: pagesCounts,
           currentIndex: currentIndex,
           pdfUrl: widget.pdfURl,
+
+          isBytesAvaiable: false,
 
           // Pass the current index
         ),
